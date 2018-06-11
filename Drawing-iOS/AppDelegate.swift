@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import DrawingKit_iOS
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        if let device = MTLCreateSystemDefaultDevice(), let library = device.makeDefaultLibrary() {
+            
+            configureDrawingShaderLibrary(library: library, device: device)
+        }
+        
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        guard let window = self.window else { fatalError("window does not exist") }
+        let vc = DrawingViewController()
+        window.rootViewController = vc
+        window.makeKeyAndVisible()
+        
         return true
     }
 

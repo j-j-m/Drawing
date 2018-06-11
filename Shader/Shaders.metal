@@ -10,9 +10,10 @@
 
 #include <metal_stdlib>
 #include <simd/simd.h>
+#include "Simplex2D.metal"
 
 // Including header shared between this Metal shader code and Swift/C code executing Metal API commands
-#import "ShaderTypes.h"
+#import "../Shader/ShaderTypes.h"
 
 using namespace metal;
 
@@ -44,11 +45,19 @@ fragment float4 fragmentShader(ColorInOut in [[stage_in]],
                                constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]],
                                texture2d<half> colorMap     [[ texture(TextureIndexColor) ]])
 {
-    constexpr sampler colorSampler(mip_filter::linear,
-                                   mag_filter::linear,
-                                   min_filter::linear);
-
-    half4 colorSample   = colorMap.sample(colorSampler, in.texCoord.xy);
-
-    return float4(colorSample);
+//    constexpr sampler colorSampler(mip_filter::linear,
+//                                   mag_filter::linear,
+//                                   min_filter::linear);
+//
+//    half4 colorSample   = colorMap.sample(colorSampler, in.texCoord.xy);
+//
+//    return float4(colorSample);
+    
+    float4 s = uniforms.modelViewMatrix * in.texCoord.xyxy;
+    float r = noisy(s.xy);
+    float g = noisy(s.yx);
+    float b = snoise(s.xy);
+    
+    
+    return float4(r,g,b,1.0);
 }
